@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS linha_producao (
     id_unidade INT UNSIGNED NOT NULL,
     nome_linha VARCHAR(120) NOT NULL,
     PRIMARY KEY (id_linha),
+    UNIQUE KEY uq_linha_unidade_nome (id_unidade, nome_linha),
     KEY idx_linha_unidade (id_unidade),
     CONSTRAINT fk_linha_unidade FOREIGN KEY (id_unidade)
         REFERENCES unidade(id_unidade)
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS tipo_maquina (
     nome_tipo VARCHAR(60) NOT NULL,
     horas_revisao_padrao INT UNSIGNED NOT NULL,
     PRIMARY KEY (id_tipo),
+    UNIQUE KEY uq_tipo_maquina_nome (nome_tipo),
     CONSTRAINT chk_horas_revisao CHECK (horas_revisao_padrao > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -57,6 +59,7 @@ CREATE TABLE IF NOT EXISTS componente_maquina (
     horas_uso_acumulado INT UNSIGNED NOT NULL DEFAULT 0,
     limite_horas_alerta INT UNSIGNED NOT NULL,
     PRIMARY KEY (id_componente),
+    UNIQUE KEY uq_componente_maquina_nome (id_maquina, nome_componente),
     KEY idx_componente_maquina (id_maquina),
     CONSTRAINT fk_componente_maquina FOREIGN KEY (id_maquina)
         REFERENCES maquina(id_maquina)
@@ -84,6 +87,7 @@ CREATE TABLE IF NOT EXISTS ordem_servico (
     PRIMARY KEY (id_ordem),
     KEY idx_ordem_maquina (id_maquina),
     KEY idx_ordem_tecnico (id_tecnico),
+    KEY idx_ordem_status_data (status_os, data_abertura),
     CONSTRAINT fk_ordem_maquina FOREIGN KEY (id_maquina)
         REFERENCES maquina(id_maquina)
         ON UPDATE CASCADE
